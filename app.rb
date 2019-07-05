@@ -32,7 +32,9 @@ class DremelHomeBusApp < HomeBusApp
 
     dremel = JSON.parse resp.body
 
-    pp dremel
+    if options[:verbose]
+      pp dremel
+    end
 
     state = dremel["PrinterStatus"]
     file = dremel["PrintingFileName"]
@@ -64,6 +66,10 @@ class DremelHomeBusApp < HomeBusApp
           bed_target: dremel["BedTempTarget"]
         }
       }
+
+    if options[:verbose]
+      pp results
+    end
 
       @mqtt.publish "/homebus/devices/#{@uuid}",
                     JSON.generate(results),

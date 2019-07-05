@@ -38,7 +38,7 @@ class DremelHomeBusApp < HomeBusApp
     file = dremel["PrintingFileName"]
     completion = dremel["PrintingProgress"]
 
-    if state @!= @old_state || file != @old_file || completion != @old_completion
+    if state != @old_state || file != @old_file || completion != @old_completion
       @old_state = state
       @old_file = file
       @old_completion = completion

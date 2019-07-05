@@ -55,8 +55,8 @@ class DremelHomeBusApp < HomeBusApp
         job: {
           file: file,
           progress: completion,
-          print_time: nil,
-          print_time_left: dremel["RemainTime"],
+          print_time_total: dremel["RemainTime"]*
+          print_time_remaining: dremel["RemainTime"],
           filament_length: nil
         },
         temperatures: {
@@ -71,7 +71,7 @@ class DremelHomeBusApp < HomeBusApp
       pp results
     end
 
-      @mqtt.publish "/homebus/devices/#{@uuid}",
+      @mqtt.publish "/homebus/device/#{@uuid}",
                     JSON.generate(results),
                     true
     end

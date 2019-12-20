@@ -55,7 +55,7 @@ class DremelHomeBusApp < HomeBusApp
         job: {
           file: file,
           progress: completion,
-          print_time_total: dremel["RemainTime"]*
+          print_time_total: dremel["RemainTime"],
           print_time_remaining: dremel["RemainTime"],
           filament_length: nil
         },

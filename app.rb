@@ -6,6 +6,9 @@ require 'net/http'
 require 'json'
 
 class DremelHomeBusApp < HomeBusApp
+  DDC_3DPRINTER = 'org.homebus.experimental.3dprinter'
+  DDC_COMPLETED_JOB = 'org.homebus.experimental.3dprinter-completed-job'
+
   def initialize(options)
     @options = options
 
@@ -27,10 +30,29 @@ class DremelHomeBusApp < HomeBusApp
   def setup!
   end
 
-  def work!
-    resp = Net::HTTP.post(URI(@server_url +  '/getHomeMessage'), '')
+  def _get_dremel
+    begin
+      if @https
+        uri = URI(@server_url)
 
-    dremel = JSON.parse resp.body
+        req = Net::HTTP::Post.new('/getHomeMessage')
+        resp = Net::HTTP.start(uri.host,
+                               uri.port,
+                               use_ssl: true,
+                               verify_mode: OpenSSL::SSL::VERIFY_NONE) do |https|
+          https.request(req)
+        end
+      else
+        resp = Net::HTTP.post(URI(@server_url +  '/getHomeMessage'), '')
+        JSON.parse resp.body
+      end
+    rescue
+      nil
+    end
+  end
+
+  def work!
+    dremel = _get_dremel
 
     if options[:verbose]
       pp dremel
@@ -47,7 +69,10 @@ class DremelHomeBusApp < HomeBusApp
 
       results = {
         id: @uuid,
-        timestamp: Time.now.to_i,
+        timestamp: Time.now.to_i
+      }
+
+      results[DDC] = {
         status: {
           state: state,
           total_prints: dremel["UsageCounter"]
@@ -55,7 +80,7 @@ class DremelHomeBusApp < HomeBusApp
         job: {
           file: file,
           progress: completion,
-          print_time_total: dremel["RemainTime"]*
+          print_time_total: dremel["RemainTime"],
           print_time_remaining: dremel["RemainTime"],
           filament_length: nil
         },
@@ -71,9 +96,7 @@ class DremelHomeBusApp < HomeBusApp
       pp results
     end
 
-      @mqtt.publish "/homebus/device/#{@uuid}",
-                    JSON.generate(results),
-                    true
+      publish! DDC, results
     end
 
     sleep update_delay
@@ -96,7 +119,7 @@ class DremelHomeBusApp < HomeBusApp
   end
 
   def serial_number
-    ''
+    @server_url
   end
 
   def pin
@@ -111,8 +134,8 @@ class DremelHomeBusApp < HomeBusApp
         index: 0,
         accuracy: 0,
         precision: 0,
-        wo_topics: [ '/dremel' ],
-        ro_topics: [ '/dremel/cmd' ],
+        wo_topics: [ DDC ],
+        ro_topics: [ ],
         rw_topics: []
       }
     ]

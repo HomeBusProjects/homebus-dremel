@@ -73,7 +73,7 @@ class DremelHomeBusApp < HomeBusApp
         timestamp: Time.now.to_i
       }
 
-      results[DDC] = {
+      results[DDC_3DPRINTER] = {
         status: {
           state: state,
           total_prints: dremel["UsageCounter"]
@@ -97,7 +97,7 @@ class DremelHomeBusApp < HomeBusApp
       pp results
     end
 
-      publish! DDC, results
+      publish! DDC_3DPRINTER, results
     end
 
     sleep update_delay
@@ -135,7 +135,7 @@ class DremelHomeBusApp < HomeBusApp
         index: 0,
         accuracy: 0,
         precision: 0,
-        wo_topics: [ DDC ],
+        wo_topics: [ DDC_3DPRINTER ],
         ro_topics: [ ],
         rw_topics: []
       }

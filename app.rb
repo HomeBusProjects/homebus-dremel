@@ -15,6 +15,7 @@ class DremelHomeBusApp < HomeBusApp
     Dotenv.load('.env')
 
     @server_url = options[:server] || ENV['DREMEL_SERVER_URL']
+    @https = @server_url.include? 'https'
 
     @old_state = ''
     @old_file = ''

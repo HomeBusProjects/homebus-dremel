@@ -69,11 +69,6 @@ class DremelHomeBusApp < HomeBusApp
       @old_completion = completion
 
       results = {
-        id: @uuid,
-        timestamp: Time.now.to_i
-      }
-
-      results[DDC_3DPRINTER] = {
         status: {
           state: state,
           total_prints: dremel["UsageCounter"]

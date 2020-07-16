@@ -34,12 +34,12 @@ class DremelHomeBusApp < HomeBusApp
   def _get_dremel
     begin
       if @https
-       uri = URI(@server_url)
-
+        uri = URI(@server_url + '/getHomeMessage')
+        
         Net::HTTP.start(uri.host,
-                              uri.port,
-                              use_ssl: uri.scheme == 'https',
-                              verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
+                        uri.port,
+                        use_ssl: uri.scheme == 'https',
+                        verify_mode: OpenSSL::SSL::VERIFY_NONE) do |http|
           req = Net::HTTP::Post.new uri
           resp = http.request(req)
           JSON.parse resp.body

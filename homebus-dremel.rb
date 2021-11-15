@@ -3,7 +3,7 @@
 require './options'
 require './app'
 
-octo_app_options = DremelHomeBusAppOptions.new
+octo_app_options = DremelHomebusAppOptions.new
 
-octo = DremelHomeBusApp.new octo_app_options.options
+octo = DremelHomebusApp.new octo_app_options.options
 octo.run!

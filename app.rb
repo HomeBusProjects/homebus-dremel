@@ -1,17 +1,24 @@
 require 'homebus'
-require 'homebus_app'
-require 'mqtt'
+
 require 'dotenv'
 require 'net/http'
 require 'json'
 
-class DremelHomeBusApp < HomeBusApp
+class DremelHomebusApp < Homebus::App
   DDC_3DPRINTER = 'org.homebus.experimental.3dprinter'
   DDC_COMPLETED_JOB = 'org.homebus.experimental.3dprinter-completed-job'
 
   def initialize(options)
     @options = options
 
+    super
+  end
+
+  def update_interval
+    60
+  end
+
+  def setup!
     Dotenv.load('.env')
 
     @server_url = options[:server] || ENV['DREMEL_SERVER_URL']
@@ -21,14 +28,10 @@ class DremelHomeBusApp < HomeBusApp
     @old_file = ''
     @old_completion = ''
 
-    super
-  end
-
-  def update_delay
-    60
-  end
-
-  def setup!
+    @device = Homebus::Device.new name: "Dremel ",
+                                  manufacturer: 'Homebus',
+                                  model: 'Dremel 3D printer publisher',
+                                  serial_number: @server_url
   end
 
   def _get_dremel
@@ -93,48 +96,21 @@ class DremelHomeBusApp < HomeBusApp
       pp results
     end
 
-      publish! DDC_3DPRINTER, results
+      @device.publish! DDC_3DPRINTER, results
     end
 
-    sleep update_delay
+    sleep update_interval
   end
 
-  def manufacturer
-    'HomeBus'
+  def name
+    'Homebus Dremel 3d printer publisher'
   end
 
-  def model
-    'Dremel publisher'
-  end
-
-  def friendly_name
-    "Dremel server at #w{@server_url}"
-  end
-
-  def friendly_location
-    'CTRLH'
-  end
-
-  def serial_number
-    @server_url
-  end
-
-  def pin
-    ''
+  def publishes
+    [ DDC_3DPRINTER, DDC_COMPLETED_JOB ]
   end
 
   def devices
-    [
-      { friendly_name: 'Dremel',
-        friendly_location: @server_url,
-        update_frequency: update_delay,
-        index: 0,
-        accuracy: 0,
-        precision: 0,
-        wo_topics: [ DDC_3DPRINTER ],
-        ro_topics: [ ],
-        rw_topics: []
-      }
-    ]
+    [ @device ]
   end
 end

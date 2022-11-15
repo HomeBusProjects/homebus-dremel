@@ -1,6 +1,8 @@
 require 'homebus/options'
 
-class DremelHomebusAppOptions < Homebus::Options
+require 'homebus-dremel/version'
+
+class HomebusDremel::Options < Homebus::Options
   def app_options(op)
     server_help = 'Server URL, like "https://ummon:5000" or "http://10.0.1.104"'
 
@@ -16,7 +18,7 @@ class DremelHomebusAppOptions < Homebus::Options
   end
 
   def version
-    '0.0.1'
+    HomebusDremel::VERSION
   end
 
   def name

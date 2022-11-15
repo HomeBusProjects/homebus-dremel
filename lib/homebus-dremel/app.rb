@@ -4,7 +4,7 @@ require 'dotenv'
 require 'net/http'
 require 'json'
 
-class DremelHomebusApp < Homebus::App
+class HomebusDremel::App < Homebus::App
   DDC_3DPRINTER = 'org.homebus.experimental.3dprinter'
   DDC_COMPLETED_JOB = 'org.homebus.experimental.3dprinter-completed-job'
 

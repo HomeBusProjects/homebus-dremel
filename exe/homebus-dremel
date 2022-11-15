@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+
+require 'homebus-dremel/options'
+require 'homebus-dremel/app'
+
+dremel_app_options = HomebusDremel::Options.new
+
+dremel_app = HomebusDremel::App.new dremel_app_options.options
+dremel_app.run!
